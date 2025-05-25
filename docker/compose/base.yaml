@@ -1,0 +1,15 @@
+volumes:
+  label-studio-data:
+    name: label-studio-data
+  postgres-data:
+    name: label-studio-postgres-data
+  redis-data:
+    name: label-studio-redis-data
+
+networks:
+  label-studio-network:
+    name: label-studio-network
+    driver: bridge
+  minio-network:
+    name: minio-network
+    driver: bridge

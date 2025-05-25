@@ -1,0 +1,20 @@
+[project]
+name = "mlops-course"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Oleh Borysevych",email = "borysevych.oleh87@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "datasets (>=3.6.0,<4.0.0)",
+    "python-dotenv (>=1.1.0,<2.0.0)",
+    "dvc (>=3.59.2,<4.0.0)",
+    "dvc-s3 (>=3.2.0,<4.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
