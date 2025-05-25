@@ -5,6 +5,7 @@ repos:
     hooks:
       - id: check-merge-conflict
       - id: check-added-large-files 
+        exclude: .doc/videos/.*
       - id: debug-statements
       - id: check-json
       - id: check-toml

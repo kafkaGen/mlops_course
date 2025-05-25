@@ -76,3 +76,29 @@ The project uses DVC with MinIO as remote storage for dataset versioning:
    git commit -m "Add labeled dataset"
    dvc push
    ```
+
+## Data Flow
+
+The data management pipeline follows this workflow:
+
+1. **Data Ingestion**: New prompt data is uploaded to the MinIO bucket `prompt-injections-raw-data` through the MinIO Console or API
+2. **Data Synchronization**: The data labeling team synchronizes Label Studio with MinIO on a weekly basis to access new unlabeled data samples
+3. **Data Annotation**: Annotators label the new data samples in Label Studio using the binary classification schema (Clean/Injection)
+4. **Export Process**: After labeling is complete, the entire dataset (including both previously labeled and newly labeled data) is exported from Label Studio in JSON format
+5. **Version Control**: The exported dataset is versioned using DVC:
+
+   ```bash
+   dvc add data/prompt-injections-dataset-labeled-full.json
+   git add data/prompt-injections-dataset-labeled-full.json.dvc
+   git commit -m "Update labeled dataset with new samples"
+   dvc push
+   ```
+
+6. **Data Access**: Other team members and downstream processes can access the latest version of the dataset by pulling it from DVC:
+
+   ```bash
+   git pull
+   dvc pull data/prompt-injections-dataset-labeled-full.json
+   ```
+
+This workflow ensures data consistency, enables collaboration, and maintains a complete history of the dataset as it evolves over time.
