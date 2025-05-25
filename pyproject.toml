@@ -11,10 +11,26 @@ dependencies = [
     "datasets (>=3.6.0,<4.0.0)",
     "python-dotenv (>=1.1.0,<2.0.0)",
     "dvc (>=3.59.2,<4.0.0)",
-    "dvc-s3 (>=3.2.0,<4.0.0)"
+    "dvc-s3 (>=3.2.0,<4.0.0)",
+    "pre-commit (>=4.2.0,<5.0.0)"
 ]
 
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 140
+
+[tool.isort]
+py_version = 311
+line_length = 140
+
+[tool.flake8]
+max-line-length = 140
+exclude = [".git", "__pycache__", ".venv"]
+max-complexity = 8
+per-file-ignores = [
+    '__init__.py:F401',
+]

@@ -1,28 +1,82 @@
-# TODO:
-1. check if with new docker setup label studio is running
-2. check if i can login in label studio
+# MLOps Course Project: LLM Prompt Injection Detection
 
+## Overview
 
+This repository contains the work for an MLOps course project focused on building a robust machine learning pipeline for detecting malicious prompt injections in Large Language Models (LLMs). The project demonstrates the implementation of MLOps best practices through a series of practical tasks, starting with data management and labeling processes.
 
-1. found dataset
-2. setuped minio service, manualy created buckets
-3. setupped label studio and all its deps, manualy created the project
-4. synced label studio with minio
-5. create 10 examples and load to minio, labeled on label studio
-6. manually loaded rest of data in label studio
-7. manually exported all dataset to one json file
+## Problem Statement
 
+LLM prompt injections represent a significant security threat where malicious users attempt to manipulate AI systems by crafting inputs that bypass safety measures or extract sensitive information. This project aims to build a classification system that can identify potentially harmful prompts, distinguishing between:
 
+- **Clean Prompts**: Normal, safe user inputs
+- **Injection Prompts**: Malicious inputs designed to manipulate the system
 
-7.5. push changes to git
+The [deepset/prompt-injections](https://huggingface.co/datasets/deepset/prompt-injections) dataset from Hugging Face was used, which contains examples of both clean and injection prompts for training and evaluation.
 
-8.0. clean prev dvc setup
-8. setup dvc with minio as remote
-9. zip full dataset json
-10. add zip to dvc
-11. commit changes
-12. push changes
+## Project Structure
 
-13. clean repository
-14. add some artifacts
-15. update README
+```
+mlops_course/
+├── data/                  # Dataset storage
+├── docker/                # Docker configuration
+│   ├── compose/           # Modular docker-compose files
+│   └── docker-compose.yaml # Main compose file
+├── help/                  # Helper scripts
+│   └── download_dataset.py # Script to download and format dataset
+├── .dvc/                  # DVC configuration
+├── .env                   # Environment variables (not tracked by git)
+├── .env.example           # Example environment variables
+├── Makefile               # Makefile for common tasks
+├── pyproject.toml         # Poetry project configuration
+└── poetry.lock            # Poetry lock file
+```
+
+## Environment Setup
+
+### Prerequisites
+
+- Python 3.11+, <3.12
+- [Poetry](https://python-poetry.org/docs/#installation) for dependency management
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
+
+### Setting Up the Python Environment
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd mlops_course
+   ```
+
+2. Install dependencies using Poetry:
+   ```bash
+   poetry install
+   ```
+
+3. Activate the virtual environment:
+   ```bash
+   poetry shell
+   ```
+
+4. Set up pre-commit hooks:
+   ```bash
+   pre-commit install
+   ```
+
+5. Create your `.env` file from the example:
+   ```bash
+   cp .env.example .env
+   ```
+   Then edit the `.env` file to add your credentials.
+
+## Project Development Stages
+
+This project is developed in several continuous stages, each focusing on different aspects of the MLOps lifecycle. Detailed documentation for each stage is available in the `.doc` directory:
+
+1. [Data Management](.doc/DataManagement.md) - Setting up data acquisition, labeling, and versioning
+2. Model Development (Coming Soon)
+3. Model Deployment (Coming Soon)
+4. Monitoring and Feedback (Coming Soon)
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
