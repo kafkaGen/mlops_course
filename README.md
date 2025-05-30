@@ -80,7 +80,7 @@ This project is developed in several continuous stages, each focusing on differe
 
 1. [Data Management](.doc/DataManagement.md) - Setting up data acquisition, labeling, and versioning
 2. [Model Training and Evaluation](.doc/ModelTrainingAndEvaluation.md) - Training and evaluating a prompt injection detection model, saving to model registry
-3. Model Deployment (Coming Soon)
+3. [Model Deployment](.doc/ModelDeployment.md) - Deploying the prompt injection detection model with FastAPI and Kubernetes
 4. Monitoring and Feedback (Coming Soon)
 
 ## License

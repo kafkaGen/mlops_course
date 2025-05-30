@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prompt-injection-classifier-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prompt-injection-classifier-app
+  template:
+    metadata:
+      labels:
+        app: prompt-injection-classifier-app
+    spec:
+      containers:
+        - name: prompt-injection-classifier-app
+          image: prompt-injection-classifier-app:latest
+          imagePullPolicy: Never
+          args:
+            - uvicorn
+            - src.api.main:app
+            - --host
+            - 0.0.0.0
+            - --port
+            - "8888"
+          ports:
+            - containerPort: 8888
+              name: http
+          envFrom:
+            - configMapRef:
+                name: prompt-injection-env
+            - secretRef:
+                name: prompt-injection-secrets
+          livenessProbe:
+            httpGet:
+              path: /health/ping
+              port: 8888
+            initialDelaySeconds: 20
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health/ping
+              port: 8888
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 5
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "1024Mi"
+            limits:
+              cpu: "500m"
+              memory: "2Gi"

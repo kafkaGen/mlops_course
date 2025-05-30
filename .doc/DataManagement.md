@@ -1,4 +1,4 @@
-# Data Management (Step 1)
+# Data Management (Phase 1)
 
 The first phase of the project focuses on setting up a robust data management pipeline, including:
 
@@ -7,7 +7,7 @@ The first phase of the project focuses on setting up a robust data management pi
 To start or restart all required services (Label Studio, MinIO, etc.), run:
 
 ```bash
-make start-services
+make start-docker-services
 ```
 
 ## 2. Data Acquisition

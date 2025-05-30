@@ -1,4 +1,0 @@
-include:
-  - ./compose/base.yaml
-  - ./compose/label-studio.yaml
-  - ./compose/minio.yaml
