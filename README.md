@@ -15,7 +15,7 @@ The [deepset/prompt-injections](https://huggingface.co/datasets/deepset/prompt-i
 
 ## Project Structure
 
-```
+``` none
 mlops_course/
 ├── data/                  # Dataset storage
 ├── docker/                # Docker configuration
@@ -42,30 +42,36 @@ mlops_course/
 ### Setting Up the Python Environment
 
 1. Clone the repository:
+
    ```bash
    git clone <repository-url>
    cd mlops_course
    ```
 
 2. Install dependencies using Poetry:
+
    ```bash
    poetry install
    ```
 
 3. Activate the virtual environment:
+
    ```bash
    poetry shell
    ```
 
 4. Set up pre-commit hooks:
+
    ```bash
    pre-commit install
    ```
 
 5. Create your `.env` file from the example:
+
    ```bash
    cp .env.example .env
    ```
+
    Then edit the `.env` file to add your credentials.
 
 ## Project Development Stages
@@ -73,7 +79,7 @@ mlops_course/
 This project is developed in several continuous stages, each focusing on different aspects of the MLOps lifecycle. Detailed documentation for each stage is available in the `.doc` directory:
 
 1. [Data Management](.doc/DataManagement.md) - Setting up data acquisition, labeling, and versioning
-2. Model Development (Coming Soon)
+2. [Model Training and Evaluation](.doc/ModelTrainingAndEvaluation.md) - Training and evaluating a prompt injection detection model, saving to model registry
 3. Model Deployment (Coming Soon)
 4. Monitoring and Feedback (Coming Soon)
 
