@@ -3,3 +3,4 @@ include:
   - ./compose/label-studio.yaml
   - ./compose/minio.yaml
   - ./compose/prompt-injection-classifier-app.yaml
+  - ./compose/monitoring.yaml

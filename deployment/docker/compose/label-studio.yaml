@@ -1,4 +1,5 @@
 services:
+
   label-studio:
     image: heartexlabs/label-studio:latest
     container_name: label-studio

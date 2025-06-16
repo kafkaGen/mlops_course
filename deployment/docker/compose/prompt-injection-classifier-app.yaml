@@ -12,10 +12,12 @@ services:
       - ../../../.env
     ports:
       - "${PROMPT_INJECTION_CLASSIFIER_APP_PORT}:8000"
+    networks:
+      - monitoring-network
+    command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health/ping"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 20s
-    command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000

@@ -1,10 +1,16 @@
 volumes:
   label-studio-data:
     name: label-studio-data
+  minio-data:
+    name: minio-data
   postgres-data:
     name: label-studio-postgres-data
   redis-data:
     name: label-studio-redis-data
+  prometheus_data:
+    name: prometheus_data
+  grafana_data:
+    name: grafana_data
 
 networks:
   label-studio-network:
@@ -12,4 +18,7 @@ networks:
     driver: bridge
   minio-network:
     name: minio-network
+    driver: bridge
+  monitoring-network:
+    name: monitoring-network
     driver: bridge
