@@ -17,3 +17,8 @@ scrape_configs:
       - targets: ['cadvisor:8080']
         labels:
           instance: 'containers'
+
+  - job_name: 'fastapi-prompt-injection-app'
+    static_configs:
+      - targets: ['prompt-injection-classifier-app:8000']
+    metrics_path: '/metrics'

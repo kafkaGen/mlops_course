@@ -4,6 +4,10 @@ run-docker-services:
 stop-docker-services:
 	docker compose -p mlops_course down
 
+stress-test-endpoint:
+	@echo "Testing Prompt Injection Classifier endpoint..."
+	python help/stess_test_classification_endpoint.py --dataset data/prompt-injections_train.json
+
 run-kubernetes-server:
 	@echo "Creating Kind cluster..."	
 	kind create cluster --config deployment/kubernetes/kind-config.yaml
