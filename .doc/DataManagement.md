@@ -60,7 +60,9 @@ The project uses DVC with MinIO as remote storage for dataset versioning:
 
    ```bash
    dvc remote add -d minio s3://prompt-injections-dataset-dvc-storage/
-   dvc remote modify minio endpointurl http://localhost:9000
+   dvc remote modify minio endpointurl http://localhost:${MINIO_API_PORT}
+   dvc remote modify --local minio access_key_id ${MINIO_ROOT_USER}
+   dvc remote modify --local minio secret_access_key ${MINIO_ROOT_PASSWORD}
    ```
 
 3. Add the dataset to DVC:
@@ -98,7 +100,7 @@ The data management pipeline follows this workflow:
 
    ```bash
    git pull
-   dvc pull data/prompt-injections-dataset-labeled-full.json
+   dvc pull ./data/prompt-injections-dataset-labeled-full.json.dvc
    ```
 
 This workflow ensures data consistency, enables collaboration, and maintains a complete history of the dataset as it evolves over time.
