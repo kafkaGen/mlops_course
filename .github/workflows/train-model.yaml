@@ -3,7 +3,6 @@ name: Train Model Workflow
 on:
   # Manual trigger via GitHub UI
   workflow_dispatch:
-  
   # Trigger when training config is changed
   push:
     branches:

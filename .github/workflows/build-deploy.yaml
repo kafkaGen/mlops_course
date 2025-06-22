@@ -1,0 +1,103 @@
+name: Build & Deploy to AWS
+
+on:
+  # Manual trigger via GitHub UI
+  workflow_dispatch:
+  # Trigger when training config is changed
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'deployment/docker/images/**'
+      - '.github/workflows/build-deploy.yml'
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION }}
+
+jobs:
+
+  pre-commit-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: --all-files
+
+  provision-infra:
+    needs: pre-commit-check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: deployment/aws
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: ${{ env.AWS_REGION }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+      - name: Terraform Init
+        run: terraform init
+      - name: Terraform Validate
+        run: terraform validate
+      - name: Terraform Plan
+        run: terraform plan -var-file=terraform.tfvars
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -var-file=terraform.tfvars
+
+  build-and-push-images:
+    needs: provision-infra
+    runs-on: ubuntu-latest
+    env:
+      ECR_REPO_FASTAPI_PIC: fastapi-app-prompt-injection-classifier
+      ECR_REPO_PROMETHEUS: custom-prometheus
+      ECR_REPO_GRAFANA: custom-grafana
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials (Access Key Method)
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Push FastAPI App
+        run: |
+          docker build -t $ECR_REPO_FASTAPI_PIC -f deployment/docker/images/prompt-injection-classifier-app.Dockerfile .
+          docker tag $ECR_REPO_FASTAPI_PIC:latest ${{ steps.login-ecr.outputs.registry }}/${ECR_REPO_FASTAPI_PIC}:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/${ECR_REPO_FASTAPI_PIC}:latest
+
+      - name: Build and Push Prometheus
+        run: |
+          docker build -t $ECR_REPO_PROMETHEUS -f deployment/docker/images/prometheus.Dockerfile .
+          docker tag $ECR_REPO_PROMETHEUS:latest ${{ steps.login-ecr.outputs.registry }}/${ECR_REPO_PROMETHEUS}:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/${ECR_REPO_PROMETHEUS}:latest
+
+      - name: Build and Push Grafana
+        run: |
+          docker build -t $ECR_REPO_GRAFANA -f deployment/docker/images/grafana.Dockerfile .
+          docker tag $ECR_REPO_GRAFANA:latest ${{ steps.login-ecr.outputs.registry }}/${ECR_REPO_GRAFANA}:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/${ECR_REPO_GRAFANA}:latest
+
+  # Future ECS deployment block (placeholder)
+  deploy-to-ecs:
+    if: false  # placeholder to disable
+    needs: build-and-push-images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder
+        run: echo "ECS deployment logic to be added here..."

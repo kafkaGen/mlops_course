@@ -36,6 +36,7 @@ package-mode = false
 line-length = 140
 
 [tool.isort]
+profile = "black"
 py_version = 311
 line_length = 140
 
