@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 
@@ -48,9 +49,9 @@ def download_dataset(dataset_name, output_dir="./data"):
         json.dump(test_formatted_data, f, ensure_ascii=False, indent=2)
 
 
-def main():
-    download_dataset("deepset/prompt-injections", output_dir="./data")
-
-
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Download and format dataset for Label Studio")
+    parser.add_argument("--output_dir", type=str, default="./data", help="Directory to save the formatted dataset")
+    args = parser.parse_args()
+
+    download_dataset("deepset/prompt-injections", output_dir=args.output_dir)

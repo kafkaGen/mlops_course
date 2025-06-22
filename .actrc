@@ -1,0 +1,4 @@
+--platform ubuntu-latest=catthehacker/ubuntu:act-latest
+--container-architecture linux/amd64
+--env-file .env.local
+--secret-file secrets.local

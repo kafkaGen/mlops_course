@@ -8,6 +8,12 @@ stress-test-endpoint:
 	@echo "Testing Prompt Injection Classifier endpoint..."
 	python help/stess_test_classification_endpoint.py --dataset data/prompt-injections_train.json
 
+run-train-model-workflow:
+	@echo "Running training workflow..."
+	help/act -j train-model
+
+	@echo "Training workflow completed successfully!"
+
 run-kubernetes-server:
 	@echo "Creating Kind cluster..."	
 	kind create cluster --config deployment/kubernetes/kind-config.yaml

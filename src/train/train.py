@@ -90,6 +90,30 @@ def log_model(wandb_run: wandb.sdk.wandb_run.Run, model: fasttext.FastText, metr
 
     wandb_run.log_artifact(artifact)
 
+    print("\n🔍 Checking existing 'latest' model in W&B...")
+
+    api = wandb.Api()
+    artifact_name = f"{wandb_run.entity}/model-registry/Prompt-injection-classifier:latest"
+
+    try:
+        latest_artifact = api.artifact(artifact_name)
+        latest_f1 = latest_artifact.metadata.get("metrics", {}).get("f1")
+
+        if latest_f1 is None:
+            raise ValueError("Latest artifact has no F1 score!")
+
+        print(f"📦 Latest model F1 score: {latest_f1:.4f}")
+        print(f"📦 Current model F1 score: {metrics['f1']:.4f}")
+
+        if metrics["f1"] > latest_f1:
+            print("✅ Promoting new model to 'latest'...")
+            wandb_run.link_artifact(artifact, target_path="model-registry/Prompt-injection-classifier", aliases=["latest"])
+        else:
+            print("ℹ️ New model not better than latest — not promoted.")
+    except wandb.errors.CommError:
+        print("⚠️ No 'latest' model found — this will become the first 'latest'.")
+        wandb_run.link_artifact(artifact, target_path="model-registry/Prompt-injection-classifier", aliases=["latest"])
+
     shutil.rmtree("models", ignore_errors=True)
 
 

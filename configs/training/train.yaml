@@ -1,0 +1,15 @@
+dataset_prepare_config:
+  input: './data/prompt-injections-dataset-labeled-full.json'
+  output: './data/prompt-injections-split'
+  test-size: 0.2
+  seed: 13
+
+train_config:
+  train: "./data/prompt-injections-split/train.fasttext"
+  test: "./data/prompt-injections-split/test.fasttext"
+  dim: 150
+  epoch: 50
+  lr: 0.1
+  word-ngrams: 2
+  loss: 'softmax'
+  threshold: 0.5

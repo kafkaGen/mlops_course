@@ -1,0 +1,92 @@
+name: Train Model Workflow
+
+on:
+  # Manual trigger via GitHub UI
+  workflow_dispatch:
+  
+  # Trigger when training config is changed
+  push:
+    branches:
+      - main
+    paths:
+      - 'configs/training/train.yaml'
+
+env:
+  PYTHON_VERSION: "3.11"
+  MINIO_API_PORT: ${{ vars.MINIO_API_PORT }}
+
+jobs:
+  train-model:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: latest
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+      
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+      
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-root
+      
+      - name: Install project
+        run: poetry install --no-interaction
+      
+      - name: Verify config file exists
+        run: |
+          if [ ! -f "configs/training/train.yaml" ]; then
+            echo "Config file configs/training/train.yaml not found!"
+            exit 1
+          fi
+          echo "Using config file: configs/training/train.yaml"
+      
+      - name: Run training script
+        env:
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+          MINIO_HOST: ${{ secrets.MINIO_HOST }}
+          MINIO_API_PORT: ${{ env.MINIO_API_PORT }}
+          MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
+          MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          echo "Configuring DVC remote storage..."
+          # Update DVC to point to MinIO running on host
+          poetry run dvc remote modify --local minio endpointurl http://${MINIO_HOST}:${MINIO_API_PORT}
+          poetry run dvc remote modify --local minio access_key_id ${MINIO_ROOT_USER}
+          poetry run dvc remote modify --local minio secret_access_key ${MINIO_ROOT_PASSWORD}
+
+          echo "Starting model training..."
+          echo "Working directory: $(pwd)"
+          poetry run python help/train_flow.py --config-path configs/training/train.yaml
+      
+      - name: Training completed
+        if: success()
+        run: echo "✅ Training completed successfully"
+      
+      - name: Training failed
+        if: failure()
+        run: echo "❌ Training failed - check logs for details"
+
+      - name: Cleanup DVC local config
+        if: always()
+        run: |
+          echo "Cleaning up .dvc/config.local..."
+          rm -f .dvc/config.local
