@@ -4,10 +4,9 @@ import shutil
 
 import fasttext
 import pandas as pd
+import wandb
 from dotenv import load_dotenv
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_recall_fscore_support
-
-import wandb
 
 LABEL_MAPPING = {
     "Clean": 0,

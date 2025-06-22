@@ -1,8 +1,8 @@
 import tempfile
 
 import fasttext
-
 import wandb
+
 from src.api.logger import logger
 
 
