@@ -28,4 +28,3 @@ resource "aws_ecr_lifecycle_policy" "this" {
     ]
   })
 }
-

@@ -11,3 +11,9 @@ module "ecr" {
   source = "./modules/ecr"
   repositories = var.ecr_repositories
 }
+
+module "ecs" {
+  source           = "./modules/ecs"
+  repository_urls  = module.ecr.repository_urls
+  wandb_api_key    = var.wandb_api_key
+}

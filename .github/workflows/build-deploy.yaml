@@ -93,11 +93,32 @@ jobs:
           docker tag $ECR_REPO_GRAFANA:latest ${{ steps.login-ecr.outputs.registry }}/${ECR_REPO_GRAFANA}:latest
           docker push ${{ steps.login-ecr.outputs.registry }}/${ECR_REPO_GRAFANA}:latest
 
-  # Future ECS deployment block (placeholder)
+
   deploy-to-ecs:
-    if: false  # placeholder to disable
+    name: Deploy Services to ECS
     needs: build-and-push-images
     runs-on: ubuntu-latest
     steps:
-      - name: Placeholder
-        run: echo "ECS deployment logic to be added here..."
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install
+
+      - name: Force new deployment on ECS
+        run: |
+          aws --no-cli-pager ecs update-service \
+            --cluster prompt-injection-cluster \
+            --service monitoring-service \
+            --force-new-deployment
+  
